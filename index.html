@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>ImageTools Hub – Ultimate Image Toolkit</title>
+    <meta name="description" content="Complete free image tools: resize, crop, merge, filters, rotate, EXIF, and more. All in your browser.">
+    <meta name="keywords" content="image tools, resize, crop, merge images, color palette, EXIF, free image editor">
+    <meta name="author" content="ImageTools Hub">
+    <link rel="canonical" href="https://yourdomain.com/">
+    <meta property="og:title" content="ImageTools Hub – Ultimate Image Toolkit">
+    <meta property="og:description" content="All-in-one free image tools. Works in your browser, no upload.">
+    <meta property="og:type" content="website">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; transition: background 0.2s, color 0.2s, border 0.2s; }
+        :root { --bg-primary: #f8fafc; --bg-secondary: #ffffff; --text-primary: #0f172a; --text-secondary: #475569; --border: #e2e8f0; --card-shadow: 0 4px 6px -2px rgba(0,0,0,0.05), 0 10px 15px -3px rgba(0,0,0,0.1); --button-bg: #2563eb; --button-hover: #1d4ed8; --button-secondary: #64748b; --accent: #3b82f6; --navbar-bg: #ffffff; }
+        body.dark { --bg-primary: #0f172a; --bg-secondary: #1e293b; --text-primary: #f1f5f9; --text-secondary: #94a3b8; --border: #334155; --card-shadow: 0 4px 6px -2px rgba(0,0,0,0.3); --button-bg: #3b82f6; --button-hover: #2563eb; --button-secondary: #475569; --accent: #60a5fa; --navbar-bg: #1e293b; }
+        body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; background: var(--bg-primary); color: var(--text-primary); padding: 0; }
+        .container { max-width: 1600px; margin: 0 auto; padding: 20px; }
+        
+        /* Navbar */
+        .navbar { background: var(--navbar-bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); background-color: rgba(var(--bg-secondary), 0.9); }
+        .nav-container { max-width: 1600px; margin: 0 auto; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+        .logo { font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg, #2563eb, #7c3aed); background-clip: text; -webkit-background-clip: text; color: transparent; text-decoration: none; }
+        .nav-links { display: flex; flex-wrap: wrap; gap: 12px; }
+        .nav-links a { color: var(--text-secondary); text-decoration: none; padding: 6px 12px; border-radius: 30px; font-size: 0.9rem; transition: all 0.2s; }
+        .nav-links a:hover { background: var(--button-bg); color: white; }
+        .theme-toggle { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 40px; padding: 6px 14px; cursor: pointer; color: var(--text-primary); font-size: 0.9rem; }
+        
+        header { text-align: center; margin: 30px 0 40px; }
+        h1 { font-size: 2.5rem; background: linear-gradient(135deg, #2563eb, #7c3aed); background-clip: text; -webkit-background-clip: text; color: transparent; margin-bottom: 10px; }
+        .subhead { color: var(--text-secondary); font-size: 1.1rem; }
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 30px; margin-bottom: 50px; }
+        .tool-card { background: var(--bg-secondary); border-radius: 24px; box-shadow: var(--card-shadow); padding: 24px; border: 1px solid var(--border); scroll-margin-top: 80px; }
+        .tool-title { font-size: 1.5rem; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+        .tool-desc { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px; border-left: 3px solid var(--accent); padding-left: 12px; }
+        .tool-area { display: flex; flex-direction: column; gap: 16px; }
+        input, select, button, textarea { font-family: inherit; font-size: 0.95rem; }
+        input[type="file"] { padding: 10px 0; color: var(--text-primary); }
+        input[type="file"]::file-selector-button { background: var(--button-secondary); color: white; border: none; padding: 8px 16px; border-radius: 30px; cursor: pointer; margin-right: 12px; }
+        input[type="number"], input[type="text"], select { padding: 12px 14px; border: 1px solid var(--border); border-radius: 16px; background: var(--bg-primary); color: var(--text-primary); }
+        .range-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        button { background: var(--button-bg); color: white; border: none; padding: 12px 24px; border-radius: 40px; font-weight: 500; cursor: pointer; }
+        button:hover { background: var(--button-hover); transform: scale(0.98); }
+        .result-area { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); text-align: center; }
+        .result-area img { max-width: 100%; max-height: 250px; border-radius: 12px; border: 1px solid var(--border); margin-top: 10px; }
+        .download-btn { background: #10b981; margin-top: 12px; display: inline-block; text-decoration: none; color: white; padding: 8px 20px; border-radius: 40px; font-size: 0.85rem; cursor: pointer; border: none; }
+        .info-text { font-size: 0.8rem; color: var(--text-secondary); margin-top: 10px; }
+        footer { text-align: center; padding: 30px 0; border-top: 1px solid var(--border); color: var(--text-secondary); font-size: 0.85rem; }
+        @media (max-width: 1000px) { .tools-grid { grid-template-columns: 1fr; } .nav-links { display: none; } }
+        .filter-buttons, .shape-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+        .filter-buttons button, .shape-buttons button { background: var(--button-secondary); padding: 6px 12px; font-size: 0.8rem; }
+        #cropCanvas { max-width: 100%; border-radius: 12px; cursor: crosshair; }
+        .palette-colors { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 12px; }
+        .color-swatch { width: 50px; height: 50px; border-radius: 12px; border: 1px solid var(--border); }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">🖼️ ImageTools Hub</a>
+            <div class="nav-links" id="navLinks">
+                <a href="#resize">Resize</a>
+                <a href="#convert">Convert</a>
+                <a href="#compress">Compress</a>
+                <a href="#qrgen">QR Gen</a>
+                <a href="#rotateflip">Rotate/Flip</a>
+                <a href="#crop">Crop</a>
+                <a href="#filters">Filters</a>
+                <a href="#text">Add Text</a>
+                <a href="#info">Info</a>
+                <a href="#qrread">QR Read</a>
+                <a href="#multidownload">Multi-DL</a>
+                <a href="#social">Social</a>
+                <a href="#merge">Merge</a>
+                <a href="#palette">Palette</a>
+                <a href="#round">Round</a>
+                <a href="#freerotate">FreeRotate</a>
+                <a href="#diagflip">DiagFlip</a>
+                <a href="#exif">EXIF</a>
+                <a href="#shapecrop">Shape</a>
+            </div>
+            <button class="theme-toggle" id="themeToggle">🌙 Dark Mode</button>
+        </div>
+    </nav>
+    <div class="container">
+        <header>
+            <h1>ImageTools Hub</h1>
+            <p class="subhead">Ultimate free image toolkit – all tools work locally in your browser.</p>
+        </header>
+        <div class="tools-grid" id="toolsGrid"></div>
+        <footer>⚡ All tools work locally. No images are uploaded. Private & free.</footer>
+    </div>
+
+    <script>
+        // Dark mode
+        const setTheme = (dark) => { if(dark) { document.body.classList.add('dark'); localStorage.setItem('theme','dark'); document.getElementById('themeToggle').innerHTML='☀️ Light Mode'; } else { document.body.classList.remove('dark'); localStorage.setItem('theme','light'); document.getElementById('themeToggle').innerHTML='🌙 Dark Mode'; } };
+        const savedTheme = localStorage.getItem('theme');
+        if(savedTheme === 'dark') setTheme(true);
+        else if(savedTheme === 'light') setTheme(false);
+        else if(window.matchMedia('(prefers-color-scheme: dark)').matches) setTheme(true);
+        else setTheme(false);
+        document.getElementById('themeToggle').addEventListener('click', () => setTheme(!document.body.classList.contains('dark')));
+
+        // Helpers
+        function loadImageFromFile(file, callback) { const img = new Image(); img.onload = () => callback(img); img.src = URL.createObjectURL(file); }
+        function canvasToDownload(canvas, filename, mime='image/png', quality=0.92) { return new Promise(resolve => canvas.toBlob(blob => { const url = URL.createObjectURL(blob); resolve({url, filename}); }, mime, quality)); }
+        function displayCanvas(canvas, resultDivId, extraHtml = '') { const url = canvas.toDataURL(); const resultDiv = document.getElementById(resultDivId); if(resultDiv) resultDiv.innerHTML = `<img src="${url}"><br><a href="${url}" download="image.png" class="download-btn">Download</a>${extraHtml}`; }
+
+        const toolsGrid = document.getElementById('toolsGrid');
+        function createToolCard(title, desc, contentHtml, resultId, idAttr = '') { 
+            const card = document.createElement('div'); 
+            card.className = 'tool-card'; 
+            if(idAttr) card.id = idAttr;
+            card.innerHTML = `<div class="tool-title">${title}</div><div class="tool-desc">${desc}</div><div class="tool-area">${contentHtml}</div><div id="${resultId}" class="result-area"></div>`; 
+            return card; 
+        }
+
+        // ==================== ALL TOOLS ====================
+        // Resize
+        const resizeResultId = 'resizeResult';
+        toolsGrid.appendChild(createToolCard('📐 Resize Image', 'Change dimensions, lock aspect ratio.', `<input type="file" id="resizeFile" accept="image/*"><div class="range-row"><label>Width:</label><input type="number" id="resizeW" value="800"><button id="lockAspect" style="background:#64748b;">🔒 Lock</button></div><div class="range-row"><label>Height:</label><input type="number" id="resizeH" value="600"></div><button id="doResize">Resize</button>`, resizeResultId, 'resize'));
+        let resizeImgFile = null, aspect = 1, lock = true;
+        document.getElementById('resizeFile')?.addEventListener('change', e => { if(e.target.files[0]) { resizeImgFile = e.target.files[0]; const img=new Image(); img.onload=()=>{ aspect=img.width/img.height; if(lock){ document.getElementById('resizeW').value=img.width; document.getElementById('resizeH').value=img.height; } const c=document.createElement('canvas'); c.width=img.width; c.height=img.height; c.getContext('2d').drawImage(img,0,0); displayCanvas(c, resizeResultId); }; img.src=URL.createObjectURL(resizeImgFile); } });
+        document.getElementById('lockAspect')?.addEventListener('click',()=>{ lock=!lock; document.getElementById('lockAspect').textContent=lock?'🔒 Locked':'🔓 Unlocked'; });
+        document.getElementById('doResize')?.addEventListener('click',()=>{ if(!resizeImgFile) return; loadImageFromFile(resizeImgFile, img=>{ const c=document.createElement('canvas'); c.width=parseInt(document.getElementById('resizeW').value); c.height=parseInt(document.getElementById('resizeH').value); c.getContext('2d').drawImage(img,0,0,c.width,c.height); displayCanvas(c, resizeResultId, `<div class="info-text">${c.width}x${c.height}</div>`); }); });
+
+        // Convert
+        const convertResultId = 'convertResult';
+        toolsGrid.appendChild(createToolCard('🔄 Convert Image', 'Change format (JPG, PNG, WebP)', `<input type="file" id="convertFile" accept="image/*"><select id="convertFormat"><option value="image/jpeg">JPEG</option><option value="image/png">PNG</option><option value="image/webp">WebP</option></select><button id="doConvert">Convert</button>`, convertResultId, 'convert'));
+        document.getElementById('doConvert')?.addEventListener('click',()=>{ let f=document.getElementById('convertFile').files[0]; if(!f) return; loadImageFromFile(f, img=>{ const c=document.createElement('canvas'); c.width=img.width; c.height=img.height; c.getContext('2d').drawImage(img,0,0); const fmt=document.getElementById('convertFormat').value; canvasToDownload(c,`converted.${fmt.split('/')[1]}`,fmt).then(({url})=>{ document.getElementById(convertResultId).innerHTML=`<img src="${url}"><br><a href="${url}" download class="download-btn">Download</a>`; }); }); });
+
+        // Compress
+        const compressResultId = 'compressResult';
+        toolsGrid.appendChild(createToolCard('🗜️ Compress Image', 'Reduce file size (JPEG quality)', `<input type="file" id="compressFile" accept="image/*"><div class="range-row"><label>Quality: <span id="qualVal">80</span>%</label><input type="range" id="compressQuality" min="10" max="100" value="80"></div><button id="doCompress">Compress</button>`, compressResultId, 'compress'));
+        const qSlider = document.getElementById('compressQuality'); if(qSlider) qSlider.addEventListener('input',()=>document.getElementById('qualVal').innerText=qSlider.value);
+        document.getElementById('doCompress')?.addEventListener('click',()=>{ let f=document.getElementById('compressFile').files[0]; if(!f) return; loadImageFromFile(f, img=>{ const c=document.createElement('canvas'); c.width=img.width; c.height=img.height; c.getContext('2d').drawImage(img,0,0); const quality=parseInt(document.getElementById('compressQuality').value)/100; canvasToDownload(c,'compressed.jpg','image/jpeg',quality).then(({url})=>{ document.getElementById(compressResultId).innerHTML=`<img src="${url}"><br><a href="${url}" download class="download-btn">Download</a><div class="info-text">Original: ${(f.size/1024).toFixed(1)} KB</div>`; }); }); });
+
+        // QR Generator
+        const qrResultId = 'qrResult';
+        toolsGrid.appendChild(createToolCard('📱 QR Code Generator', 'Create QR from text/URL', `<input type="text" id="qrText" placeholder="Enter text or URL"><div class="range-row"><label>Size:</label><input type="number" id="qrSize" value="200"></div><button id="genQR">Generate QR</button>`, qrResultId, 'qrgen'));
+        document.getElementById('genQR')?.addEventListener('click',()=>{ let txt=document.getElementById('qrText').value; if(!txt) return; let size=parseInt(document.getElementById('qrSize').value); let url=`https://quickchart.io/qr?text=${encodeURIComponent(txt)}&size=${size}`; document.getElementById(qrResultId).innerHTML=`<img src="${url}"><br><a href="${url}" download="qrcode.png" class="download-btn">Download</a>`; });
+
+        // Rotate/Flip
+        const rotateResultId = 'rotateResult';
+        toolsGrid.appendChild(createToolCard('🔄 Rotate & Flip', 'Rotate 90°, flip horizontally/vertically', `<input type="file" id="rotateFile" accept="image/*"><div style="display:flex; gap:8px; flex-wrap:wrap;"><button id="rotLeft">↺ 90°</button><button id="rotRight">↻ 90°</button><button id="flipH">↔ Flip H</button><button id="flipV">↕ Flip V</button></div><button id="resetRot">Reset</button>`, rotateResultId, 'rotateflip'));
+        let currentRotateCanvas = null, originalRotateImage = null;
+        function updateRotateDisplay() { if(currentRotateCanvas) displayCanvas(currentRotateCanvas, rotateResultId); }
+        document.getElementById('rotateFile')?.addEventListener('change', e => { if(e.target.files[0]) loadImageFromFile(e.target.files[0], img => { originalRotateImage = img; const c = document.createElement('canvas'); c.width = img.width; c.height = img.height; c.getContext('2d').drawImage(img,0,0); currentRotateCanvas = c; updateRotateDisplay(); }); });
+        document.getElementById('rotLeft')?.addEventListener('click', () => { if(originalRotateImage){ let c=document.createElement('canvas'); c.width=originalRotateImage.height; c.height=originalRotateImage.width; let ctx=c.getContext('2d'); ctx.translate(c.width/2,c.height/2); ctx.rotate(-Math.PI/2); ctx.drawImage(originalRotateImage,-originalRotateImage.width/2,-originalRotateImage.height/2); currentRotateCanvas=c; updateRotateDisplay(); } });
+        document.getElementById('rotRight')?.addEventListener('click', () => { if(originalRotateImage){ let c=document.createElement('canvas'); c.width=originalRotateImage.height; c.height=originalRotateImage.width; let ctx=c.getContext('2d'); ctx.translate(c.width/2,c.height/2); ctx.rotate(Math.PI/2); ctx.drawImage(originalRotateImage,-originalRotateImage.width/2,-originalRotateImage.height/2); currentRotateCanvas=c; updateRotateDisplay(); } });
+        document.getElementById('flipH')?.addEventListener('click', () => { if(originalRotateImage){ let c=document.createElement('canvas'); c.width=originalRotateImage.width; c.height=originalRotateImage.height; let ctx=c.getContext('2d'); ctx.translate(c.width,0); ctx.scale(-1,1); ctx.drawImage(originalRotateImage,0,0); currentRotateCanvas=c; updateRotateDisplay(); } });
+        document.getElementById('flipV')?.addEventListener('click', () => { if(originalRotateImage){ let c=document.createElement('canvas'); c.width=originalRotateImage.width; c.height=originalRotateImage.height; let ctx=c.getContext('2d'); ctx.translate(0,c.height); ctx.scale(1,-1); ctx.drawImage(originalRotateImage,0,0); currentRotateCanvas=c; updateRotateDisplay(); } });
+        document.getElementById('resetRot')?.addEventListener('click', () => { if(originalRotateImage) { const c = document.createElement('canvas'); c.width = originalRotateImage.width; c.height = originalRotateImage.height; c.getContext('2d').drawImage(originalRotateImage,0,0); currentRotateCanvas = c; updateRotateDisplay(); } });
+
+        // Crop
+        const cropResultId = 'cropResult';
+        toolsGrid.appendChild(createToolCard('✂️ Crop Image', 'Drag to select area, use aspect presets', `<input type="file" id="cropFile" accept="image/*"><div class="range-row"><button id="crop1_1">1:1</button><button id="crop4_3">4:3</button><button id="crop16_9">16:9</button></div><canvas id="cropCanvas" style="max-width:100%; border:1px solid var(--border); border-radius:12px;"></canvas><button id="applyCrop">Apply Crop</button>`, cropResultId, 'crop'));
+        let cropCtx, cropImageObj, cropCanvasEl, isDragging=false, startX,startY,rect={x:0,y:0,w:0,h:0}, cropAspect=null;
+        setTimeout(()=>{ cropCanvasEl=document.getElementById('cropCanvas'); if(cropCanvasEl) cropCtx=cropCanvasEl.getContext('2d'); },100);
+        document.getElementById('cropFile')?.addEventListener('change',e=>{ if(e.target.files[0]){ loadImageFromFile(e.target.files[0], img=>{ cropImageObj=img; cropCanvasEl.width=img.width; cropCanvasEl.height=img.height; cropCtx.drawImage(img,0,0); rect={x:0,y:0,w:img.width,h:img.height}; drawCropRect(); }); } });
+        function drawCropRect(){ if(!cropCtx||!cropImageObj) return; cropCtx.clearRect(0,0,cropCanvasEl.width,cropCanvasEl.height); cropCtx.drawImage(cropImageObj,0,0); cropCtx.strokeStyle='#2563eb'; cropCtx.lineWidth=3; cropCtx.strokeRect(rect.x,rect.y,rect.w,rect.h); cropCtx.fillStyle='rgba(0,0,0,0.3)'; cropCtx.fillRect(0,0,cropCanvasEl.width,cropCanvasEl.height); cropCtx.clearRect(rect.x,rect.y,rect.w,rect.h); cropCtx.drawImage(cropImageObj,rect.x,rect.y,rect.w,rect.h,rect.x,rect.y,rect.w,rect.h); }
+        if(cropCanvasEl) { cropCanvasEl.addEventListener('mousedown',e=>{ let r=cropCanvasEl.getBoundingClientRect(), scaleX=cropCanvasEl.width/r.width; let mx=(e.clientX-r.left)*scaleX, my=(e.clientY-r.top)*scaleX; startX=mx; startY=my; isDragging=true; }); cropCanvasEl.addEventListener('mousemove',e=>{ if(!isDragging) return; let r=cropCanvasEl.getBoundingClientRect(), scaleX=cropCanvasEl.width/r.width; let mx=(e.clientX-r.left)*scaleX, my=(e.clientY-r.top)*scaleX; let w=Math.abs(mx-startX), h=Math.abs(my-startY); if(cropAspect) h=w/cropAspect; rect={x:Math.min(startX,mx), y:Math.min(startY,my), w:w, h:h}; drawCropRect(); }); cropCanvasEl.addEventListener('mouseup',()=>{ isDragging=false; }); }
+        document.getElementById('crop1_1')?.addEventListener('click',()=>{ cropAspect=1; if(cropCanvasEl) rect={x:0,y:0,w:cropCanvasEl.width, h:cropCanvasEl.width}; drawCropRect(); });
+        document.getElementById('crop4_3')?.addEventListener('click',()=>{ cropAspect=4/3; if(cropCanvasEl) rect={x:0,y:0,w:cropCanvasEl.width, h:cropCanvasEl.width/(4/3)}; drawCropRect(); });
+        document.getElementById('crop16_9')?.addEventListener('click',()=>{ cropAspect=16/9; if(cropCanvasEl) rect={x:0,y:0,w:cropCanvasEl.width, h:cropCanvasEl.width/(16/9)}; drawCropRect(); });
+        document.getElementById('applyCrop')?.addEventListener('click',()=>{ if(!cropImageObj||rect.w<=0||rect.h<=0) return; const c=document.createElement('canvas'); c.width=rect.w; c.height=rect.h; c.getContext('2d').drawImage(cropImageObj,rect.x,rect.y,rect.w,rect.h,0,0,rect.w,rect.h); canvasToDownload(c,'cropped.png').then(({url})=>{ document.getElementById(cropResultId).innerHTML=`<img src="${url}"><br><a href="${url}" download class="download-btn">Download</a>`; }); });
+
+        // Filters
+        const filterResultId = 'filterResult';
+        toolsGrid.appendChild(createToolCard('🎨 Filters', 'Apply effects', `<input type="file" id="filterFile" accept="image/*"><div class="filter-buttons"><button id="gray">Grayscale</button><button id="sepia">Sepia</button><button id="invert">Invert</button><button id="contrastUp">+Contrast</button><button id="contrastDown">-Contrast</button><button id="brightUp">+Brightness</button><button id="brightDown">-Brightness</button><button id="resetFilter">Reset</button></div>`, filterResultId, 'filters'));
+        let filterImgObj=null, filterCanvas=null;
+        document.getElementById('filterFile')?.addEventListener('change',e=>{ if(e.target.files[0]) loadImageFromFile(e.target.files[0], img=>{ filterImgObj=img; const c=document.createElement('canvas'); c.width=img.width; c.height=img.height; c.getContext('2d').drawImage(img,0,0); filterCanvas=c; updateFilterResult(); }); });
+        function updateFilterResult(){ if(filterCanvas) displayCanvas(filterCanvas, filterResultId); }
+        function applyFilter(filterFunc){ if(!filterCanvas||!filterImgObj) return; let imgData=filterCanvas.getContext('2d').getImageData(0,0,filterCanvas.width,filterCanvas.height); let data=imgData.data; filterFunc(data); filterCanvas.getContext('2d').putImageData(imgData,0,0); updateFilterResult(); }
+        document.getElementById('gray')?.addEventListener('click',()=>applyFilter(d=>{ for(let i=0;i<d.length;i+=4){ let avg=(d[i]+d[i+1]+d[i+2])/3; d[i]=d[i+1]=d[i+2]=avg; } }));
+        document.getElementById('sepia')?.addEventListener('click',()=>applyFilter(d=>{ for(let i=0;i<d.length;i+=4){ let r=d[i], g=d[i+1], b=d[i+2]; d[i]=Math.min(255, r*0.393+g*0.769+b*0.189); d[i+1]=Math.min(255, r*0.349+g*0.686+b*0.168); d[i+2]=Math.min(255, r*0.272+g*0.534+b*0.131); } }));
+        document.getElementById('invert')?.addEventListener('click',()=>applyFilter(d=>{ for(let i=0;i<d.length;i+=4){ d[i]=255-d[i]; d[i+1]=255-d[i+1]; d[i+2]=255-d[i+2]; } }));
+        document.getElementById('contrastUp')?.addEventListener('click',()=>applyFilter(d=>{ let f=1.2; for(let i=0;i<d.length;i+=4){ d[i]=Math.min(255,(d[i]-128)*f+128); d[i+1]=Math.min(255,(d[i+1]-128)*f+128); d[i+2]=Math.min(255,(d[i+2]-128)*f+128); } }));
+        document.getElementById('contrastDown')?.addEventListener('click',()=>applyFilter(d=>{ let f=0.8; for(let i=0;i<d.length;i+=4){ d[i]=Math.min(255,(d[i]-128)*f+128); d[i+1]=Math.min(255,(d[i+1]-128)*f+128); d[i+2]=Math.min(255,(d[i+2]-128)*f+128); } }));
+        document.getElementById('brightUp')?.addEventListener('click',()=>applyFilter(d=>{ for(let i=0;i<d.length;i+=4){ d[i]=Math.min(255,d[i]+30); d[i+1]=Math.min(255,d[i+1]+30); d[i+2]=Math.min(255,d[i+2]+30); } }));
+        document.getElementById('brightDown')?.addEventListener('click',()=>applyFilter(d=>{ for(let i=0;i<d.length;i+=4){ d[i]=Math.max(0,d[i]-30); d[i+1]=Math.max(0,d[i+1]-30); d[i+2]=Math.max(0,d[i+2]-30); } }));
+        document.getElementById('resetFilter')?.addEventListener('click',()=>{ if(filterImgObj){ const c=document.createElement('canvas'); c.width=filterImgObj.width; c.height=filterImgObj.height; c.getContext('2d').drawImage(filterImgObj,0,0); filterCanvas=c; updateFilterResult(); } });
+
+        // Add Text
+        const textResultId = 'textResult';
+        toolsGrid.appendChild(createToolCard('✏️ Add Text', 'Add watermark or caption', `<input type="file" id="textFile" accept="image/*"><input type="text" id="overlayText" placeholder="Your text here"><div class="range-row"><label>Font size:</label><input type="number" id="fontSize" value="32"></div><div class="range-row"><label>Color:</label><input type="color" id="textColor" value="#ffffff"></div><button id="addTextBtn">Add Text</button>`, textResultId, 'text'));
+        let textImgObj=null;
+        document.getElementById('textFile')?.addEventListener('change',e=>{ if(e.target.files[0]) loadImageFromFile(e.target.files[0], img=>{ textImgObj=img; const c=document.createElement('canvas'); c.width=img.width; c.height=img.height; c.getContext('2d').drawImage(img,0,0); displayCanvas(c, textResultId); }); });
+        document.getElementById('addTextBtn')?.addEventListener('click',()=>{ if(!textImgObj) return; const txt=document.getElementById('overlayText').value; if(!txt) return; const c=document.createElement('canvas'); c.width=textImgObj.width; c.height=textImgObj.height; const ctx=c.getContext('2d'); ctx.drawImage(textImgObj,0,0); ctx.font=`${document.getElementById('fontSize').value}px sans-serif`; ctx.fillStyle=document.getElementById('textColor').value; ctx.fillText(txt, 50, 100); displayCanvas(c, textResultId); });
+
+        // Info
+        const infoResultId = 'infoResult';
+        toolsGrid.appendChild(createToolCard('ℹ️ Image Info', 'See filename, dimensions, size, type', `<input type="file" id="infoFile" accept="image/*">`, infoResultId, 'info'));
+        document.getElementById('infoFile')?.addEventListener('change',e=>{ if(e.target.files[0]){ const f=e.target.files[0]; const img=new Image(); img.onload=()=>{ document.getElementById(infoResultId).innerHTML=`<div class="info-text">📄 Name: ${f.name}<br>📐 Size: ${img.width} x ${img.height} px<br>💾 File size: ${(f.size/1024).toFixed(1)} KB<br>🏷️ Type: ${f.type}</div>`; }; img.src=URL.createObjectURL(f); } });
+
+        // QR Reader
+        const qrReadResultId = 'qrReadResult';
+        toolsGrid.appendChild(createToolCard('📷 QR Code Reader', 'Upload QR image to read content', `<input type="file" id="qrReaderFile" accept="image/*">`, qrReadResultId, 'qrread'));
+        document.getElementById('qrReaderFile')?.addEventListener('change',e=>{ if(e.target.files[0]){ const f=e.target.files[0]; const img=new Image(); img.onload=()=>{ const canvas=document.createElement('canvas'); canvas.width=img.width; canvas.height=img.height; const ctx=canvas.getContext('2d'); ctx.drawImage(img,0,0); const imageData=ctx.getImageData(0,0,img.width,img.height); const code=jsQR(imageData.data, img.width, img.height); if(code) document.getElementById(qrReadResultId).innerHTML=`<div class="info-text">✅ Content: <strong>${code.data}</strong></div>`; else document.getElementById(qrReadResultId).innerHTML=`<div class="info-text">❌ No QR code found</div>`; }; img.src=URL.createObjectURL(f); } });
+
+        // Multi-format download
+        const multiResultId = 'multiResult';
+        toolsGrid.appendChild(createToolCard('💾 Multi-Format Download', 'Save image as PNG, JPG or WebP', `<input type="file" id="multiFile" accept="image/*"><div style="display:flex; gap:8px;"><button id="dlPng">PNG</button><button id="dlJpg">JPG</button><button id="dlWebp">WebP</button></div>`, multiResultId, 'multidownload'));
+        let multiImgObj=null;
+        document.getElementById('multiFile')?.addEventListener('change',e=>{ if(e.target.files[0]) loadImageFromFile(e.target.files[0], img=>{ multiImgObj=img; const c=document.createElement('canvas'); c.width=img.width; c.height=img.height; c.getContext('2d').drawImage(img,0,0); displayCanvas(c, multiResultId); }); });
+        function downloadMulti(mime, ext){ if(!multiImgObj) return; const c=document.createElement('canvas'); c.width=multiImgObj.width; c.height=multiImgObj.height; c.getContext('2d').drawImage(multiImgObj,0,0); canvasToDownload(c,`image.${ext}`,mime,0.92).then(({url})=>{ const a=document.createElement('a'); a.href=url; a.download=`image.${ext}`; a.click(); }); }
+        document.getElementById('dlPng')?.addEventListener('click',()=>downloadMulti('image/png','png'));
+        document.getElementById('dlJpg')?.addEventListener('click',()=>downloadMulti('image/jpeg','jpg'));
+        document.getElementById('dlWebp')?.addEventListener('click',()=>downloadMulti('image/webp','webp'));
+
+        // Social Media Crop
+        const socialResultId = 'socialResult';
+        toolsGrid.appendChild(createToolCard('📱 Social Media Crop', 'Crop to exact dimensions', `<input type="file" id="socialFile" accept="image/*"><div style="display:flex; gap:8px; flex-wrap:wrap;"><button id="fbPost">Facebook (1200x630)</button><button id="igPost">Instagram (1080x1080)</button><button id="ytThumb">YouTube Thumbnail (1280x720)</button></div>`, socialResultId, 'social'));
+        let socialImg=null;
+        document.getElementById('socialFile')?.addEventListener('change',e=>{ if(e.target.files[0]) loadImageFromFile(e.target.files[0], img=>{ socialImg=img; const c=document.createElement('canvas'); c.width=img.width; c.height=img.height; c.getContext('2d').drawImage(img,0,0); displayCanvas(c, socialResultId); }); });
+        function cropSocial(w,h){ if(!socialImg) return; const c=document.createElement('canvas'); c.width=w; c.height=h; const ctx=c.getContext('2d'); const scale=Math.max(w/socialImg.width, h/socialImg.height); const sw=socialImg.width*scale, sh=socialImg.height*scale; const sx=(w-sw)/2, sy=(h-sh)/2; ctx.drawImage(socialImg, sx,sy,sw,sh); canvasToDownload(c,`social_${w}x${h}.png`).then(({url})=>{ document.getElementById(socialResultId).innerHTML=`<img src="${url}"><br><a href="${url}" download class="download-btn">Download</a>`; }); }
+        document.getElementById('fbPost')?.addEventListener('click',()=>cropSocial(1200,630));
+        document.getElementById('igPost')?.addEventListener('click',()=>cropSocial(1080,1080));
+        document.getElementById('ytThumb')?.addEventListener('click',()=>cropSocial(1280,720));
+
+        // Merge Images
+        const mergeResultId = 'mergeResult';
+        toolsGrid.appendChild(createToolCard('🔗 Merge Images', 'Combine two images side by side or vertically', `<input type="file" id="mergeFile1" accept="image/*"><input type="file" id="mergeFile2" accept="image/*"><div class="range-row"><button id="mergeHorizontal">Horizontal</button><button id="mergeVertical">Vertical</button></div>`, mergeResultId, 'merge'));
+        let mergeImg1=null, mergeImg2=null;
+        document.getElementById('mergeFile1')?.addEventListener('change',e=>{ if(e.target.files[0]) loadImageFromFile(e.target.files[0], img=>mergeImg1=img); });
+        document.getElementById('mergeFile2')?.addEventListener('change',e=>{ if(e.target.files[0]) loadImageFromFile(e.target.files[0], img=>mergeImg2=img); });
+        function mergeImages(direction){ if(!mergeImg1||!mergeImg2) return; let canvas; if(direction==='horizontal'){ canvas=document.createElement('canvas'); canvas.width=mergeImg1.width+mergeImg2.width; canvas.height=Math.max(mergeImg1.height,mergeImg2.height); let ctx=canvas.getContext('2d'); ctx.drawImage(mergeImg1,0,0); ctx.drawImage(mergeImg2,mergeImg1.width,0); } else { canvas=document.createElement('canvas'); canvas.width=Math.max(mergeImg1.width,mergeImg2.width); canvas.height=mergeImg1.height+mergeImg2.height; let ctx=canvas.getContext('2d'); ctx.drawImage(mergeImg1,0,0); ctx.drawImage(mergeImg2,0,mergeImg1.height); } displayCanvas(canvas, mergeResultId); }
+        document.getElementById('mergeHorizontal')?.addEventListener('click',()=>mergeImages('horizontal'));
+        document.getElementById('mergeVertical')?.addEventListener('click',()=>mergeImages('vertical'));
+
+        // Color Palette
+        const paletteResultId = 'paletteResult';
+        toolsGrid.appendChild(createToolCard('🎨 Color Palette Extractor', 'Extract dominant colors from image', `<input type="file" id="paletteFile" accept="image/*"><button id="extractPalette">Extract Colors</button>`, paletteResultId, 'palette'));
+        document.getElementById('extractPalette')?.addEventListener('click',()=>{ let f=document.getElementById('paletteFile').files[0]; if(!f) return; loadImageFromFile(f, img=>{ let canvas=document.createElement('canvas'); canvas.width=img.width; canvas.height=img.height; let ctx=canvas.getContext('2d'); ctx.drawImage(img,0,0); let imgData=ctx.getImageData(0,0,canvas.width,canvas.height).data; let colorMap={}; for(let i=0;i<imgData.length;i+=4){ let r=Math.floor(imgData[i]/32)*32, g=Math.floor(imgData[i+1]/32)*32, b=Math.floor(imgData[i+2]/32)*32; let key=`${r},${g},${b}`; colorMap[key]=(colorMap[key]||0)+1; } let sorted=Object.entries(colorMap).sort((a,b)=>b[1]-a[1]).slice(0,10); let html='<div class="palette-colors">'; for(let [color] of sorted){ let [r,g,b]=color.split(','); let hex='#'+((1<<24)+(parseInt(r)<<16)+(parseInt(g)<<8)+parseInt(b)).toString(16).slice(1); html+=`<div><div class="color-swatch" style="background:${hex}"></div><div class="info-text">${hex}</div></div>`; } html+='</div>'; document.getElementById(paletteResultId).innerHTML=html; }); });
+
+        // Round Crop
+        const roundResultId = 'roundResult';
+        toolsGrid.appendChild(createToolCard('⚪ Round Crop', 'Crop image to circle with transparent background', `<input type="file" id="roundFile" accept="image/*"><button id="doRound">Crop to Circle</button>`, roundResultId, 'round'));
+        document.getElementById('doRound')?.addEventListener('click',()=>{ let f=document.getElementById('roundFile').files[0]; if(!f) return; loadImageFromFile(f, img=>{ let size=Math.min(img.width,img.height); let canvas=document.createElement('canvas'); canvas.width=size; canvas.height=size; let ctx=canvas.getContext('2d'); ctx.beginPath(); ctx.arc(size/2,size/2,size/2,0,2*Math.PI); ctx.clip(); let sx=(img.width-size)/2, sy=(img.height-size)/2; ctx.drawImage(img,sx,sy,size,size,0,0,size,size); displayCanvas(canvas, roundResultId); }); });
+
+        // Free Rotate
+        const freeRotateResultId = 'freeRotateResult';
+        toolsGrid.appendChild(createToolCard('🔄 Free Rotate', 'Rotate image at any angle', `<input type="file" id="freeRotateFile" accept="image/*"><div class="range-row"><label>Angle: <span id="angleVal">0</span>°</label><input type="range" id="rotateAngle" min="0" max="360" value="0" step="1"></div><button id="applyFreeRotate">Rotate</button>`, freeRotateResultId, 'freerotate'));
+        let freeRotateImg=null;
+        document.getElementById('freeRotateFile')?.addEventListener('change', e => { if(e.target.files[0]) loadImageFromFile(e.target.files[0], img => { freeRotateImg = img; const c = document.createElement('canvas'); c.width = img.width; c.height = img.height; c.getContext('2d').drawImage(img, 0, 0); displayCanvas(c, freeRotateResultId); }); });
+        document.getElementById('applyFreeRotate')?.addEventListener('click', () => { if(!freeRotateImg) return; let angle = parseInt(document.getElementById('rotateAngle').value) * Math.PI / 180; let img = freeRotateImg; let cos = Math.abs(Math.cos(angle)), sin = Math.abs(Math.sin(angle)); let newW = Math.floor(img.width * cos + img.height * sin); let newH = Math.floor(img.height * cos + img.width * sin); let canvas = document.createElement('canvas'); canvas.width = newW; canvas.height = newH; let ctx = canvas.getContext('2d'); ctx.translate(newW/2, newH/2); ctx.rotate(angle); ctx.drawImage(img, -img.width/2, -img.height/2); displayCanvas(canvas, freeRotateResultId); });
+        document.getElementById('rotateAngle')?.addEventListener('input', () => { document.getElementById('angleVal').innerText = document.getElementById('rotateAngle').value; });
+
+        // Diagonal Flip
+        const diagFlipResultId = 'diagFlipResult';
+        toolsGrid.appendChild(createToolCard('🔀 Diagonal Flip', 'Flip image diagonally', `<input type="file" id="diagFlipFile" accept="image/*"><button id="doDiagFlip">Diagonal Flip</button>`, diagFlipResultId, 'diagflip'));
+        document.getElementById('doDiagFlip')?.addEventListener('click',()=>{ let f=document.getElementById('diagFlipFile').files[0]; if(!f) return; loadImageFromFile(f, img=>{ let canvas=document.createElement('canvas'); canvas.width=img.width; canvas.height=img.height; let ctx=canvas.getContext('2d'); ctx.transform(0,1,1,0,0,0); ctx.drawImage(img,0,0); displayCanvas(canvas, diagFlipResultId); }); });
+
+        // EXIF Reader
+        const exifResultId = 'exifResult';
+        toolsGrid.appendChild(createToolCard('📷 EXIF Data', 'Read camera metadata', `<input type="file" id="exifFile" accept="image/*"><button id="readExif">Read EXIF</button>`, exifResultId, 'exif'));
+        document.getElementById('readExif')?.addEventListener('click',()=>{ let f=document.getElementById('exifFile').files[0]; if(!f) return; EXIF.getData(f, function(){ let exif=EXIF.getAllTags(this); let html='<div class="info-text">'; for(let key in exif) html+=`<strong>${key}:</strong> ${exif[key]}<br>`; html+='</div>'; document.getElementById(exifResultId).innerHTML=html; }); });
+
+        // Shape Crop (Circle, Square, Rounded Square)
+        const shapeResultId = 'shapeResult';
+        toolsGrid.appendChild(createToolCard('🔘 Shape Crop', 'Crop to custom shapes', `<input type="file" id="shapeFile" accept="image/*"><div class="shape-buttons"><button id="shapeCircle">Circle</button><button id="shapeSquare">Square</button><button id="shapeRounded">Rounded Square</button></div>`, shapeResultId, 'shapecrop'));
+        document.getElementById('shapeFile')?.addEventListener('change',e=>{ if(e.target.files[0]) loadImageFromFile(e.target.files[0], img=>{ window.shapeImg=img; const c=document.createElement('canvas'); c.width=img.width; c.height=img.height; c.getContext('2d').drawImage(img,0,0); displayCanvas(c, shapeResultId); }); });
+        function applyShapeCrop(shape){ if(!window.shapeImg) return; let img=window.shapeImg; let size=Math.min(img.width,img.height); let canvas=document.createElement('canvas'); canvas.width=size; canvas.height=size; let ctx=canvas.getContext('2d'); ctx.beginPath(); if(shape==='circle') ctx.arc(size/2,size/2,size/2,0,2*Math.PI); else if(shape==='square') ctx.rect(0,0,size,size); else if(shape==='rounded') { let r=size*0.2; ctx.moveTo(r,0); ctx.lineTo(size-r,0); ctx.quadraticCurveTo(size,0,size,r); ctx.lineTo(size,size-r); ctx.quadraticCurveTo(size,size,size-r,size); ctx.lineTo(r,size); ctx.quadraticCurveTo(0,size,0,size-r); ctx.lineTo(0,r); ctx.quadraticCurveTo(0,0,r,0); } ctx.clip(); let sx=(img.width-size)/2, sy=(img.height-size)/2; ctx.drawImage(img,sx,sy,size,size,0,0,size,size); displayCanvas(canvas, shapeResultId); }
+        document.getElementById('shapeCircle')?.addEventListener('click',()=>applyShapeCrop('circle'));
+        document.getElementById('shapeSquare')?.addEventListener('click',()=>applyShapeCrop('square'));
+        document.getElementById('shapeRounded')?.addEventListener('click',()=>applyShapeCrop('rounded'));
+    </script>
+</body>
+</html>
